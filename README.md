@@ -32,7 +32,7 @@ Adicione etiquetas de algum lugar, como: [shields.io](https://shields.io/)
 
 
 ```http
-  GET /api/items/${id}
+  GET /api/products/${id}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
@@ -40,7 +40,7 @@ Adicione etiquetas de algum lugar, como: [shields.io](https://shields.io/)
 #### read_item(id)
 
 ```http
-  POST /api/items/${name}/${descripition}
+  POST /api/products/${name}/${descripition}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
@@ -49,7 +49,7 @@ Adicione etiquetas de algum lugar, como: [shields.io](https://shields.io/)
 #### create_item(name, descripition)
 
 ```http
-  PUT /api/items/${id_item}/${name}/${descripition}
+  PUT /api/products/${id_item}/${name}/${descripition}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
@@ -59,7 +59,7 @@ Adicione etiquetas de algum lugar, como: [shields.io](https://shields.io/)
 #### update_item(id_item, name, descripition)
 
 ```http
-  DELETE /api/items/${id_item}
+  DELETE /api/products/${id_item}
 ```
 | Parâmetro   | Tipo       | Descrição                                   |
 | :---------- | :--------- | :------------------------------------------ |
