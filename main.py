@@ -3,7 +3,9 @@ from sqlalchemy.orm import Session
 import models, db
 from config import engine
 from enum import Enum
-
+from pydantic import BaseModel
+from typing import Union
+from models import Products
 
 models.Banco.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -12,21 +14,41 @@ app = FastAPI()
 @app.get("/products/")
 def get_products(
             db: Session = Depends(db.conection)):
-    
+
     return db.query(models.Products).all()
 
 
-@app.post("/products/")
-def create_item(nome: str, descricao: str, valor:float, quantidade:int,
-                db: Session = Depends(db.conection)):
+class Item(BaseModel):
+    nome: str
+    descricao: Union[str, None] = None
+    valor: float
+    quantidade: Union[float, None] = None
 
-    db_products = models.Products(nome=nome, descricao=descricao, valor=valor, quantidade=quantidade)
-    
-    db.add(db_products)
+
+def create_sqlalchemy_item(item: Item):
+    return Products(nome=item.nome, descricao=item.descricao, valor=item.valor, quantidade=item.quantidade)
+
+
+@app.post("/products/")
+async def create_products(item: Item, db: Session = Depends(db.conection)):
+    sqlalchemy_item = create_sqlalchemy_item(item)
+    db.add(sqlalchemy_item)
     db.commit()
-    db.refresh(db_products)
-    
-    return db_products
+    db.refresh(sqlalchemy_item)
+
+    return sqlalchemy_item
+
+# @app.post("/products/")
+# def create_item(nome: str, descricao: str, valor:float, quantidade:int,
+#                 db: Session = Depends(db.conection)):
+
+#     db_products = models.Products(nome=nome, descricao=descricao, valor=valor, quantidade=quantidade)
+
+#     db.add(db_products)
+#     db.commit()
+#     db.refresh(db_products)
+
+#     return db_products
 
 
 @app.put("/products/{item_id}")
