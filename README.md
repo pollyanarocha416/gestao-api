@@ -3,8 +3,7 @@
 
 API 
 ## Execução:
-  - venv: cd C:\Users\Usuário\Documents -> .\.venv\Scripts\activate
-  - cd C:\Users\Usuário\Desktop\gestao-api
+  - pip install -r requirements.txt
     - uvicorn main:app --reload
 ## Referência
 
