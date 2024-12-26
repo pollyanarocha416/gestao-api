@@ -12,10 +12,9 @@ from fastapi.middleware.cors import CORSMiddleware
 models.Banco.metadata.create_all(bind=engine)
 app = FastAPI()
 
-# Adicionando o middleware para permitir CORS
+# middleware para permitir CORS
 origins = [
-    "http://127.0.0.1:5500",  # URL do seu frontend (ajuste se for diferente)
-    # Adicione outras URLs se necessário
+    "http://127.0.0.1:5500",  # URL do frontend
 ]
 
 app.add_middleware(
@@ -27,16 +26,10 @@ app.add_middleware(
 )
 
 
-@app.get("/products/")
-def get_products(db: Session = Depends(db.conection)):
-
-    return db.query(models.Products).all()
-
-
 @app.get("/usuarios/")
 def get_usuarios(db: Session = Depends(db.conection)):
-
-    return db.query(models.Usuario).all()
+    users = db.query(models.Usuario).all()
+    return users
 
 
 @app.post("/usuarios/")
@@ -52,6 +45,12 @@ def create_item(email: str, senha: str, db: Session = Depends(db.conection)):
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
         )
+
+
+@app.get("/products/")
+def get_products(db: Session = Depends(db.conection)):
+
+    return db.query(models.Products).all()
 
 
 class Item(BaseModel):
@@ -78,19 +77,6 @@ async def create_products(item: Item, db: Session = Depends(db.conection)):
     db.refresh(sqlalchemy_item)
 
     return sqlalchemy_item
-
-
-# @app.post("/products/")
-# def create_item(nome: str, descricao: str, valor:float, quantidade:int,
-#                 db: Session = Depends(db.conection)):
-
-#     db_products = models.Products(nome=nome, descricao=descricao, valor=valor, quantidade=quantidade)
-
-#     db.add(db_products)
-#     db.commit()
-#     db.refresh(db_products)
-
-#     return db_products
 
 
 @app.put("/products/{item_id}")
@@ -132,20 +118,18 @@ def delete_item(item_id: int, db: Session = Depends(db.conection)):
 
 
 # teste
+# class ModelFuncionarios(str, Enum):
+#     joao = "joao"
+#     mateus = "mateus"
+#     julia = "julia"
 
 
-class ModelFuncionarios(str, Enum):
-    joao = "joao"
-    mateus = "mateus"
-    julia = "julia"
+# @app.get("/models/{model_funcionarios}")
+# async def get_model(model_funcionarios: ModelFuncionarios):
+#     if model_funcionarios is ModelFuncionarios.joao:
+#         return {"model_name": model_funcionarios, "message": "TI"}
 
+#     if model_funcionarios.value == "joao":
+#         return {"model_name": model_funcionarios, "message": "TI Senior"}
 
-@app.get("/models/{model_funcionarios}")
-async def get_model(model_funcionarios: ModelFuncionarios):
-    if model_funcionarios is ModelFuncionarios.joao:
-        return {"model_name": model_funcionarios, "message": "TI"}
-
-    if model_funcionarios.value == "joao":
-        return {"model_name": model_funcionarios, "message": "TI Senior"}
-
-    return {"model_funcionarios": model_funcionarios, "message": "Outra area"}
+#     return {"model_funcionarios": model_funcionarios, "message": "Outra area"}
