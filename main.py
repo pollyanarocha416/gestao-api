@@ -6,16 +6,52 @@ from enum import Enum
 from pydantic import BaseModel
 from typing import Union
 from models import Products
+from fastapi.middleware.cors import CORSMiddleware
+
 
 models.Banco.metadata.create_all(bind=engine)
 app = FastAPI()
 
+# Adicionando o middleware para permitir CORS
+origins = [
+    "http://127.0.0.1:5500",  # URL do seu frontend (ajuste se for diferente)
+    # Adicione outras URLs se necessário
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Permite as origens listadas
+    allow_credentials=True,
+    allow_methods=["*"],  # Permite todos os métodos HTTP (GET, POST, PUT, DELETE, etc.)
+    allow_headers=["*"],  # Permite todos os cabeçalhos
+)
+
 
 @app.get("/products/")
-def get_products(
-            db: Session = Depends(db.conection)):
+def get_products(db: Session = Depends(db.conection)):
 
     return db.query(models.Products).all()
+
+
+@app.get("/usuarios/")
+def get_usuarios(db: Session = Depends(db.conection)):
+
+    return db.query(models.Usuario).all()
+
+
+@app.post("/usuarios/")
+def create_item(email: str, senha: str, db: Session = Depends(db.conection)):
+    try:
+        db_usuarios = models.Usuario(email=email, senha=senha)
+        db.add(db_usuarios)
+        db.commit()
+        db.refresh(db_usuarios)
+
+        return db_usuarios
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(e)
+        )
 
 
 class Item(BaseModel):
@@ -26,7 +62,12 @@ class Item(BaseModel):
 
 
 def create_sqlalchemy_item(item: Item):
-    return Products(nome=item.nome, descricao=item.descricao, valor=item.valor, quantidade=item.quantidade)
+    return Products(
+        nome=item.nome,
+        descricao=item.descricao,
+        valor=item.valor,
+        quantidade=item.quantidade,
+    )
 
 
 @app.post("/products/")
@@ -37,6 +78,7 @@ async def create_products(item: Item, db: Session = Depends(db.conection)):
     db.refresh(sqlalchemy_item)
 
     return sqlalchemy_item
+
 
 # @app.post("/products/")
 # def create_item(nome: str, descricao: str, valor:float, quantidade:int,
@@ -52,8 +94,14 @@ async def create_products(item: Item, db: Session = Depends(db.conection)):
 
 
 @app.put("/products/{item_id}")
-def update_product(item_id: int, nome:str, descricao: str, valor:float, quantidade:int, 
-                db: Session = Depends(db.conection)):
+def update_product(
+    item_id: int,
+    nome: str,
+    descricao: str,
+    valor: float,
+    quantidade: int,
+    db: Session = Depends(db.conection),
+):
 
     db_product = db.query(models.Products).filter(models.Products.id == item_id).first()
 
@@ -71,8 +119,7 @@ def update_product(item_id: int, nome:str, descricao: str, valor:float, quantida
 
 
 @app.delete("/products/{item_id}")
-def delete_item(item_id: int, 
-            db: Session = Depends(db.conection)):
+def delete_item(item_id: int, db: Session = Depends(db.conection)):
 
     db_product = db.query(models.Products).filter(models.Products.id == item_id).first()
 

@@ -10,3 +10,11 @@ class Products(Banco):
     descricao = Column(String)
     valor = Column(Integer)
     quantidade = Column(Integer)
+
+
+class Usuario(Banco):
+    __tablename__ = "usuarios"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String)
+    senha = Column(String)
