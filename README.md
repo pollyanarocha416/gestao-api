@@ -4,7 +4,7 @@
 API 
 ## Execução:
   - pip install -r requirements.txt
-    - uvicorn main:app --reload
+  - uvicorn main:app --reload
 ## Referência
 
  - [Awesome Readme Templates](https://awesomeopensource.com/project/elangosundar/awesome-README-templates)
