@@ -133,3 +133,11 @@ def delete_item(item_id: int, db: Session = Depends(db.conection)):
 #         return {"model_name": model_funcionarios, "message": "TI Senior"}
 
 #     return {"model_funcionarios": model_funcionarios, "message": "Outra area"}
+
+
+@app.get("/teste/")
+async def read_items(q: Union[str, None] = None):
+    results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
+    if q:
+        results.update({"q": q})
+    return results
