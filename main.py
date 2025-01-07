@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 import models, db
 from config import engine
@@ -136,7 +136,7 @@ def delete_item(item_id: int, db: Session = Depends(db.conection)):
 
 
 @app.get("/teste/")
-async def read_items(q: Union[str, None] = None):
+async def read_items(q: Union[str, None] = Query(default=None, max_length=50)):
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if q:
         results.update({"q": q})
