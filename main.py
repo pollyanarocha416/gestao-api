@@ -135,10 +135,10 @@ def delete_item(item_id: int, db: Session = Depends(db.conection)):
 #     return {"model_funcionarios": model_funcionarios, "message": "Outra area"}
 
 
-@app.get("/teste/")
-async def read_items(q: Union[str, None] = Query(default=None, min_length=3, max_length=50)):
+@app.get("/documents/")
+async def read_items(rg: Union[str, None] = Query(default=None, max_length=11, pattern="^[0-9]{1}\.[0-9]{3}\.[0-9]{3}-[0-9]{1}$")):
     # , pattern="^fixedquery$"  -> caso queira adicionar uma expreção regular
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
-    if q:
-        results.update({"q": q})
+    if rg:
+        results.update({"RG": rg})
     return results
