@@ -142,3 +142,9 @@ async def read_items(rg: Union[str, None] = Query(default=None, max_length=11, p
     if rg:
         results.update({"RG": rg})
     return results
+
+
+@app.get("/time/")
+async def read_items(jogadoras: Union[list[str], None] = Query(default=None)):
+    query_items = {"jogadoras": jogadoras}
+    return query_items
