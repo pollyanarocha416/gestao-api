@@ -136,7 +136,8 @@ def delete_item(item_id: int, db: Session = Depends(db.conection)):
 
 
 @app.get("/documents/")
-async def read_items(rg: Union[str, None] = Query(default=None, max_length=11, pattern="^[0-9]{1}\.[0-9]{3}\.[0-9]{3}-[0-9]{1}$")):
+async def read_items(rg: Union[str, None] = Query(default=None, max_length=11, 
+                        pattern="^[0-9]{1}\.[0-9]{3}\.[0-9]{3}-[0-9]{1}$")):
     # , pattern="^fixedquery$"  -> caso queira adicionar uma expreção regular
     results = {"items": [{"item_id": "Foo"}, {"item_id": "Bar"}]}
     if rg:
@@ -146,5 +147,11 @@ async def read_items(rg: Union[str, None] = Query(default=None, max_length=11, p
 
 @app.get("/time/")
 async def read_items(jogadoras: Union[list[str], None] = Query(default=None)):
+    query_items = {"jogadoras": jogadoras}
+    return query_items
+
+
+@app.get("/selecao/")
+async def read_items(jogadoras: list[str] = Query(default=["gabi", "carol", "ana cristina"])):
     query_items = {"jogadoras": jogadoras}
     return query_items
