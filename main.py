@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Query
+from fastapi import FastAPI, Depends, HTTPException, Query, Path
 from sqlalchemy.orm import Session
 import models, db
 from config import engine
@@ -161,3 +161,11 @@ async def read_items(
 ):
     query_items = {"jogadoras": jogadoras}
     return query_items
+
+
+@app.get("/teste_items/{item_id}")
+async def teste_items(q: str, item_id: int = Path(title="The ID of the item to get")):
+    results = {"item_id": item_id}
+    if q:
+        results.update({"q": q})
+    return results
